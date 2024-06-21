@@ -3,6 +3,8 @@
 import { useState } from 'react';
 
 export default function Calculator(){
+    const symbols = ["Ac", "<x", "/", "*", "7", "8", "9", "-", "4", "5", "6", "+", "1", "2", "3", "0", ".", "="];
+
     const [history, setHistory] = useState('0');
     const [result, setResult] = useState('0');
 
@@ -12,24 +14,9 @@ export default function Calculator(){
 
             {/* Buttons */}
             <div className="h-2/3 grid grid-cols-4 gap-0.5 justify-items-center">
-                <Button symbol="Ac"></Button>
-                <Button symbol="<x"></Button>
-                <Button symbol="/"></Button>
-                <Button symbol="*"></Button>
-                <Button symbol="7"></Button>
-                <Button symbol="8"></Button>
-                <Button symbol="9"></Button>
-                <Button symbol="-"></Button>
-                <Button symbol="4"></Button>
-                <Button symbol="5"></Button>
-                <Button symbol="6"></Button>
-                <Button symbol="+"></Button>
-                <Button symbol="1"></Button>
-                <Button symbol="2"></Button>
-                <Button symbol="3"></Button>
-                <Button symbol="0"></Button>
-                <Button symbol="."></Button>
-                <Button symbol="="></Button>
+                {symbols.map((symbol) => (
+                    <Button key={symbol} symbol={symbol}/>
+                ))}
             </div>
         </div>
     );
