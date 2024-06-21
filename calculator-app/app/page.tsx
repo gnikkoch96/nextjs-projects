@@ -1,7 +1,9 @@
-import Image from "next/image";
+import Calculator from "@/app/components/Calculator";
 
 export default function Home() {
   return (
-      <div></div>
+      <main className="w-screen h-screen bg-blue-500 flex items-center justify-center">
+        <Calculator/>
+      </main>
   );
 }
