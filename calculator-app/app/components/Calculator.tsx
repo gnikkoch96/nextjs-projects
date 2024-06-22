@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import clsx from 'clsx';
 
 export default function Calculator(){
     const symbols = ["Ac", "<x", "/", "*", "7", "8", "9", "-", "4", "5", "6", "+", "1", "2", "3", "0", ".", "="];
@@ -9,7 +10,7 @@ export default function Calculator(){
     const [result, setResult] = useState('0');
 
     return(
-        <div className="w-80 h-1/2 p-5 bg-gradient-to-br from-blue-50 to-blue-300 rounded-2xl shadow-2xl">
+        <div className="w-[360px] h-[640px] p-5 bg-gradient-to-br from-blue-50 to-blue-300 rounded-2xl shadow-2xl">
             <Display result={result} history={history}/>
 
             {/* Buttons */}
@@ -36,8 +37,8 @@ function Display({result, history}:{result:string, history:string}){
 
 function Button({symbol}:{symbol:string}){
     return(
-        <button className="w-11/12 rounded-2xl border border-white bg-gradient-to-b from-blue-100 to-blue-400
-                    font-bold text-white">
+        <button className="w-11/12 rounded-2xl border border-white bg-gradient-to-br from-white-100 to-blue-300
+                    font-bold text-white shadow">
             {symbol}</button>
     );
 }
