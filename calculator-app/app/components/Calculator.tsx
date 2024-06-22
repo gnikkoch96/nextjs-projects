@@ -9,7 +9,7 @@ export default function Calculator(){
     const [result, setResult] = useState('0');
 
     return(
-        <div className="w-80 h-1/2 p-5 bg-gradient-to-b from-gray-100 to-gray-400 rounded-2xl shadow-2xl opacity-50">
+        <div className="w-80 h-1/2 p-5 bg-gradient-to-br from-blue-50 to-blue-300 rounded-2xl shadow-2xl">
             <Display result={result} history={history}/>
 
             {/* Buttons */}
@@ -36,6 +36,8 @@ function Display({result, history}:{result:string, history:string}){
 
 function Button({symbol}:{symbol:string}){
     return(
-        <button className="w-11/12 rounded-2xl bg-amber-700">{symbol}</button>
+        <button className="w-11/12 rounded-2xl border border-white bg-gradient-to-b from-blue-100 to-blue-400
+                    font-bold text-white">
+            {symbol}</button>
     );
 }
