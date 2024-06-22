@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import clsx from 'clsx';
+import { BackspaceIcon } from '@heroicons/react/24/solid';
 
 export default function Calculator(){
-    const symbols = ["Ac", "<x", "/", "*", "7", "8", "9", "-", "4", "5", "6", "+", "1", "2", "3", "0", ".", "="];
+    const symbols = ["Ac", "<x", "/", "*", "7", "8", "9", "-", "4", "5", "6", "+", "1", "2", "3", "=", "0", "."];
 
     const [history, setHistory] = useState('0');
     const [result, setResult] = useState('0');
@@ -36,9 +37,18 @@ function Display({result, history}:{result:string, history:string}){
 }
 
 function Button({symbol}:{symbol:string}){
+    const numRegex = new RegExp("[0-9]")
+
     return(
-        <button className="w-11/12 rounded-2xl border border-white bg-gradient-to-br from-white-100 to-blue-300
-                    font-bold text-white shadow">
-            {symbol}</button>
+        <button
+            className={clsx(
+                "w-11/12 rounded-2xl border border-white font-bold shadow text-3xl",
+            {
+                "text-blue-400": !numRegex.test(symbol),
+                'opacity-50': symbol === '*' || symbol === '-' || symbol === '+' || symbol === '/',
+                "text-white": numRegex.test(symbol)
+            })}>
+            {symbol}
+        </button>
     );
 }
