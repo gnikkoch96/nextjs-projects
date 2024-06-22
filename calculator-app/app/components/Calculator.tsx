@@ -26,7 +26,7 @@ function Display({result, history}:{result:string, history:string}){
   return (
       <div className="w-full h-1/3 pb-5 rounded-3xl flex flex-col items-end justify-end">
         {/* histories */}
-        <p className="text-gray-700 text-3xl">{history}</p>
+        <p className="text-gray-400 text-3xl">{history}</p>
 
         {/* output */}
         <p className="text-black font-bold text-4xl">{result}</p>
