@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import clsx from 'clsx';
-import { BackspaceIcon } from '@heroicons/react/24/solid';
 
 export default function Calculator(){
     const symbols = ["Ac", "<x", "/", "*", "7", "8", "9", "-", "4", "5", "6", "+", "1", "2", "3", "=", "0", "."];
@@ -15,7 +14,7 @@ export default function Calculator(){
             <Display result={result} history={history}/>
 
             {/* Buttons */}
-            <div className="h-2/3 grid grid-cols-4 gap-0.5 justify-items-center">
+            <div className="h-2/3 grid grid-cols-4 gap-3 justify-items-center">
                 {symbols.map((symbol) => (
                     <Button key={symbol} symbol={symbol}/>
                 ))}
@@ -37,6 +36,7 @@ function Display({result, history}:{result:string, history:string}){
 }
 
 function Button({symbol}:{symbol:string}){
+    // test to see if the symbol is a number
     const numRegex = new RegExp("[0-9]")
 
     return(
@@ -45,9 +45,12 @@ function Button({symbol}:{symbol:string}){
                 "w-11/12 rounded-2xl border border-white font-bold shadow text-3xl",
             {
                 "text-blue-400": !numRegex.test(symbol),
-                'opacity-50': symbol === '*' || symbol === '-' || symbol === '+' || symbol === '/',
-                "text-white": numRegex.test(symbol)
-            })}>
+                'opacity-50 shadow-2xl': symbol === '*' || symbol === '-' || symbol === '+' || symbol === '/',
+                "text-white": numRegex.test(symbol) || symbol === '.' || symbol === '=',
+                'col-span-2': symbol ===  '0',
+                'row-span-2': symbol === '=',
+            })}
+        >
             {symbol}
         </button>
     );
