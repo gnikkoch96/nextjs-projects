@@ -9,27 +9,67 @@ export default function Calculator(){
     const [history, setHistory] = useState('0');
     const [result, setResult] = useState('0');
 
+    // flags
+    const [storedFirstOperand, setStoredFirstOperand] = useState(false);
+    const [storedSecondOperand, setStoredSecondOperand] = useState(false);
+    const [pressedArithmetic, setPressedArithmetic] = useState(false);
+    const [pressedNumeric, setPressedNumeric] = useState(false);
+    const [pressedEqual, setPressedEqual] = useState(false);
+
     function handleButton(symbol: string) {
         if (symbol === 'Ac') {
             // clear history and result
             setHistory('0');
             setResult('0');
+
+            // reset flags
+            setStoredFirstOperand(false);
+            setStoredSecondOperand(false);
+            setPressedArithmetic(false);
+
         } else if (symbol === '<x') {
             // delete from the display or reset to 0 if there is no more numbers
             if (result.length == 1) setResult('0');
             else setResult(result.substring(0, result.length - 1));
-        } else if (symbol === '=') {
 
+        } else if (symbol === '=') {
+            // update history
+            setHistory(history + result);
+
+            // evaluate expression
+            const evaluate = eval(history + result).toString();
+
+            // update result
+            setResult(evaluate);
+
+            // update flags
+            setStoredFirstOperand(false);
+            setStoredSecondOperand(false);
+            setPressedArithmetic(false);
         } else if (symbol === '.') {
             if(result.match('[.]')) return;
             setResult(result + symbol);
+        } else if (symbol === '+' || symbol === '-' || symbol === '*' || symbol === '/') {
+            if (!storedFirstOperand) {
+                setHistory(result + symbol);
+                setStoredFirstOperand(true);
+            } else{
+                // update arithmetic
+                setHistory(history.substring(0, history.length - 1) + symbol)
+            }
+
+            // update flags
+            setPressedArithmetic(true);
         } else { // number
-            if(result === '0'){
+            if(result === '0' || pressedArithmetic){
                 setResult(symbol);
             }else{
                 // add number to display
                 setResult(result + symbol);
             }
+
+            // update flags
+            setPressedArithmetic(false);
         }
     }
 
@@ -54,7 +94,7 @@ function Display({result, history}:{result:string, history:string}){
         <p className="text-gray-400 text-3xl">{history}</p>
 
         {/* output */}
-        <p className="text-black font-bold text-4xl">{result}</p>
+        <p className="text-gray-700 font-bold text-4xl">{result}</p>
       </div>
   );
 }
@@ -72,7 +112,7 @@ function Button({symbol, handleClick}:{symbol:string, handleClick: () => void}){
                 'opacity-70 shadow-2xl': symbol === '*' || symbol === '-' || symbol === '+' || symbol === '/',
                 "text-white": numRegex.test(symbol) || symbol === '.' || symbol === '=',
                 'col-span-2': symbol ===  '0',
-                'bg-sky-400 row-span-2': symbol === '=',
+                'bg-sky-400 row-span-2 shadow-inner shadow-sky-200': symbol === '=',
             })}
             onClick={handleClick}
         >
