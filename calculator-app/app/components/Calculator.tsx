@@ -2,74 +2,37 @@
 
 import { useState } from 'react';
 import clsx from 'clsx';
+import {Simulate} from "react-dom/test-utils";
 
 export default function Calculator(){
-    const symbols = ["Ac", "<x", "/", "*", "7", "8", "9", "-", "4", "5", "6", "+", "1", "2", "3", "=", "0", "."];
-
+    // math expression
     const [history, setHistory] = useState('0');
+
+    // display result
     const [result, setResult] = useState('0');
 
-    // flags
-    const [storedFirstOperand, setStoredFirstOperand] = useState(false);
-    const [storedSecondOperand, setStoredSecondOperand] = useState(false);
-    const [pressedArithmetic, setPressedArithmetic] = useState(false);
-    const [pressedNumeric, setPressedNumeric] = useState(false);
-    const [pressedEqual, setPressedEqual] = useState(false);
+    // stores previous number entered before operator press (first operand)
+    const [previousValue, setPreviousValue] = useState('0');
+
+    // stores the most recent operator
+    const [currentOperator, setCurrentOperator] = useState('0');
+
+    // flag used to indicate if next digit should start a new number or append to current number
+    const [isNewInput, setIsNewInput] = useState(false);
+
+    // flag used to prevent multiple decimals
+    const [hasDecimal, setHasDecimal] = useState(false);
+
+    const symbols = ["Ac", "<x", "/", "*", "7", "8", "9", "-", "4", "5", "6", "+", "1", "2", "3", "=", "0", "."];
 
     function handleButton(symbol: string) {
-        if (symbol === 'Ac') {
-            // clear history and result
-            setHistory('0');
-            setResult('0');
+        switch(symbol){
+            case "Ac":
+                // clear displays
+                setResult('0');
+                setHistory('0');
 
-            // reset flags
-            setStoredFirstOperand(false);
-            setStoredSecondOperand(false);
-            setPressedArithmetic(false);
-
-        } else if (symbol === '<x') {
-            // delete from the display or reset to 0 if there is no more numbers
-            if (result.length == 1) setResult('0');
-            else setResult(result.substring(0, result.length - 1));
-
-        } else if (symbol === '=') {
-            // update history
-            setHistory(history + result);
-
-            // evaluate expression
-            const evaluate = eval(history + result).toString();
-
-            // update result
-            setResult(evaluate);
-
-            // update flags
-            setStoredFirstOperand(false);
-            setStoredSecondOperand(false);
-            setPressedArithmetic(false);
-        } else if (symbol === '.') {
-            if(result.match('[.]')) return;
-            setResult(result + symbol);
-        } else if (symbol === '+' || symbol === '-' || symbol === '*' || symbol === '/') {
-            if (!storedFirstOperand) {
-                setHistory(result + symbol);
-                setStoredFirstOperand(true);
-            } else{
-                // update arithmetic
-                setHistory(history.substring(0, history.length - 1) + symbol)
-            }
-
-            // update flags
-            setPressedArithmetic(true);
-        } else { // number
-            if(result === '0' || pressedArithmetic){
-                setResult(symbol);
-            }else{
-                // add number to display
-                setResult(result + symbol);
-            }
-
-            // update flags
-            setPressedArithmetic(false);
+                break;
         }
     }
 
@@ -91,7 +54,7 @@ function Display({result, history}:{result:string, history:string}){
   return (
       <div className="w-full h-1/3 pb-5 rounded-3xl flex flex-col items-end justify-end">
         {/* histories */}
-        <p className="text-gray-400 text-3xl">{history}</p>
+        <p className="text-gray-400 text">{history}</p>
 
         {/* output */}
         <p className="text-gray-700 font-bold text-4xl">{result}</p>
