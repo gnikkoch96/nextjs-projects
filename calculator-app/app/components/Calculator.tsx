@@ -5,6 +5,8 @@ import clsx from 'clsx';
 import {Simulate} from "react-dom/test-utils";
 
 export default function Calculator(){
+    const MAX_DISPLAY_LENGTH: number = 15;
+
     // math expression
     const [expression, setExpression] = useState('');
 
@@ -37,6 +39,33 @@ export default function Calculator(){
                 setCurrentOperator(null);
                 setIsNewInput(false);
                 setHasDecimal(false);
+                break;
+            case "0":
+            case "1":
+            case "2":
+            case "3":
+            case "4":
+            case "5":
+            case "6":
+            case "7":
+            case "8":
+            case "9":
+                if(isNewInput){ // replace display
+                    setDisplay(symbol);
+                }else{ // append to display
+                    // edge case: display length > max length
+                    if(display.length > MAX_DISPLAY_LENGTH) return;
+
+                    // edge case: multiple leading 0s
+                    if(display === "0"){ // prevent trailing 0s
+                        if(symbol === "0") return;
+                    }
+
+                    setDisplay(display + symbol);
+                }
+
+                setExpression(expression + symbol);
+                setIsNewInput(false);
                 break;
         }
     }
