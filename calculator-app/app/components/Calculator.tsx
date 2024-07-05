@@ -2,10 +2,9 @@
 
 import { useState } from 'react';
 import clsx from 'clsx';
-import {Simulate} from "react-dom/test-utils";
 
 export default function Calculator(){
-    const MAX_DISPLAY_LENGTH: number = 15;
+    const MAX_DISPLAY_LENGTH: number = 12;
 
     // math expression
     const [expression, setExpression] = useState('');
@@ -14,13 +13,13 @@ export default function Calculator(){
     const [display, setDisplay] = useState('0');
 
     // stores previous number entered before operator press (first operand)
-    const [previousValue, setPreviousValue] = useState('' || null);
+    const [previousValue, setPreviousValue] = useState<string | null>('' || null);
 
     // stores the most recent operator
-    const [currentOperator, setCurrentOperator] = useState('' || null);
+    const [currentOperator, setCurrentOperator] = useState<string | null>('' || null);
 
     // flag used to indicate if next digit should start a new number or append to current number
-    const [isNewInput, setIsNewInput] = useState(false);
+    const [isNewInput, setIsNewInput] = useState(true);
 
     // flag used to prevent multiple decimals
     const [hasDecimal, setHasDecimal] = useState(false);
@@ -67,7 +66,52 @@ export default function Calculator(){
                 setExpression(expression + symbol);
                 setIsNewInput(false);
                 break;
+            case "+":
+            case "-":
+            case "*":
+            case "/":
+                // perform calculation
+                if(currentOperator && !isNewInput){
+                    try{
+                        const result = calculateResult(previousValue, display, currentOperator);
+                        if(result === 'Error') throw new Error("Calculation Error");
+
+                        // update display
+                        setDisplay(result);
+
+                        // store current result as previous value
+                        setPreviousValue(result);
+                    }catch(error){
+                        setDisplay('Error');
+                        setExpression('Error');
+                        setIsNewInput(true);
+                        return;
+                    }
+                }else if(!currentOperator){
+                    // store first operand
+                    setPreviousValue(display);
+                }
+
+                setPreviousValue(display);
+
+                // update expression display
+                if(currentOperator && isNewInput){ // update symbol if user hasn't pressed new input yet
+                    // replace operator
+                    setExpression(expression.slice(0, expression.length - 1) + symbol);
+                }else{
+                    setExpression(expression + symbol);
+                }
+
+                setCurrentOperator(symbol);
+                setIsNewInput(true);
+                setHasDecimal(false);
+                break;
         }
+    }
+
+    // calculats and returns the results
+    function calculateResult(previousValue: string | null, display: string, currentOperator: string | null): string {
+
     }
 
     return(
