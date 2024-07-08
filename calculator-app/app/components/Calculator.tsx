@@ -53,9 +53,8 @@ export default function Calculator(){
 
             setExpression(expression + symbol);
             setIsNewInput(false);
-        } else if (["+", "-", "*", "/"].includes(symbol)) { // perform calculation
-
-            if (currentOperator && !isNewInput) {
+        } else if (["+", "-", "*", "/"].includes(symbol)) { // pressed operator
+            if (currentOperator && !isNewInput) { // evaluate expression
                 try {
                     const result = calculateResult(previousValue, display, currentOperator);
                     if (result === 'Error') throw new Error("Calculation Error");
@@ -65,24 +64,19 @@ export default function Calculator(){
 
                     // store current result as previous value
                     setPreviousValue(result);
-                } catch (error) {
+                } catch (error) { // display errors
                     setDisplay('Error');
                     setExpression('Error');
                     setIsNewInput(true);
                     return;
                 }
-            } else if (!currentOperator) {
-                // store first operand
+            } else if (!currentOperator) { // append operator to expression
                 setPreviousValue(display);
             }
 
-            setPreviousValue(display);
-
-            // update expression display
-            if (currentOperator && isNewInput) { // update symbol if user hasn't pressed new input yet
-                // replace operator
+            if (currentOperator && isNewInput) { // replace operator
                 setExpression(expression.slice(0, expression.length - 1) + symbol);
-            } else {
+            } else { // append operator
                 setExpression(expression + symbol);
             }
 
