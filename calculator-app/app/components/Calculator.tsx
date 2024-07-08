@@ -27,91 +27,81 @@ export default function Calculator(){
     const symbols = ["Ac", "<x", "/", "*", "7", "8", "9", "-", "4", "5", "6", "+", "1", "2", "3", "=", "0", "."];
 
     function handleButton(symbol: string) {
-        switch(symbol){
-            case "Ac":
-                // clear displays
-                setDisplay('0');
-                setExpression('');
+        if (symbol === "Ac") { // reset
+            setDisplay('0');
+            setExpression('');
 
-                // reset state vars
-                setPreviousValue(null);
-                setCurrentOperator(null);
-                setIsNewInput(false);
-                setHasDecimal(false);
-                break;
-            case "0":
-            case "1":
-            case "2":
-            case "3":
-            case "4":
-            case "5":
-            case "6":
-            case "7":
-            case "8":
-            case "9":
-                if(isNewInput){ // replace display
-                    setDisplay(symbol);
-                }else{ // append to display
-                    // edge case: display length > max length
-                    if(display.length > MAX_DISPLAY_LENGTH) return;
+            // reset state vars
+            setPreviousValue(null);
+            setCurrentOperator(null);
+            setIsNewInput(true);
+            setHasDecimal(false);
+        } else if (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(symbol)) { // pressed number
+            if (isNewInput) { // replace display
+                setDisplay(symbol);
+            } else { // append to display
+                // edge case: display length > max length
+                if (display.length > MAX_DISPLAY_LENGTH) return;
 
-                    // edge case: multiple leading 0s
-                    if(display === "0"){ // prevent trailing 0s
-                        if(symbol === "0") return;
-                    }
-
-                    setDisplay(display + symbol);
+                // edge case: multiple leading 0s
+                if (display === "0") { // prevent trailing 0s
+                    if (symbol === "0") return;
                 }
 
-                setExpression(expression + symbol);
-                setIsNewInput(false);
-                break;
-            case "+":
-            case "-":
-            case "*":
-            case "/":
-                // perform calculation
-                if(currentOperator && !isNewInput){
-                    try{
-                        const result = calculateResult(previousValue, display, currentOperator);
-                        if(result === 'Error') throw new Error("Calculation Error");
+                setDisplay(display + symbol);
+            }
 
-                        // update display
-                        setDisplay(result);
+            setExpression(expression + symbol);
+            setIsNewInput(false);
+        } else if (["+", "-", "*", "/"].includes(symbol)) { // perform calculation
 
-                        // store current result as previous value
-                        setPreviousValue(result);
-                    }catch(error){
-                        setDisplay('Error');
-                        setExpression('Error');
-                        setIsNewInput(true);
-                        return;
-                    }
-                }else if(!currentOperator){
-                    // store first operand
-                    setPreviousValue(display);
+            if (currentOperator && !isNewInput) {
+                try {
+                    const result = calculateResult(previousValue, display, currentOperator);
+                    if (result === 'Error') throw new Error("Calculation Error");
+
+                    // update display
+                    setDisplay(result);
+
+                    // store current result as previous value
+                    setPreviousValue(result);
+                } catch (error) {
+                    setDisplay('Error');
+                    setExpression('Error');
+                    setIsNewInput(true);
+                    return;
                 }
-
+            } else if (!currentOperator) {
+                // store first operand
                 setPreviousValue(display);
+            }
 
-                // update expression display
-                if(currentOperator && isNewInput){ // update symbol if user hasn't pressed new input yet
-                    // replace operator
-                    setExpression(expression.slice(0, expression.length - 1) + symbol);
-                }else{
-                    setExpression(expression + symbol);
-                }
+            setPreviousValue(display);
 
-                setCurrentOperator(symbol);
-                setIsNewInput(true);
-                setHasDecimal(false);
-                break;
+            // update expression display
+            if (currentOperator && isNewInput) { // update symbol if user hasn't pressed new input yet
+                // replace operator
+                setExpression(expression.slice(0, expression.length - 1) + symbol);
+            } else {
+                setExpression(expression + symbol);
+            }
+
+            setCurrentOperator(symbol);
+            setIsNewInput(true);
+            setHasDecimal(false);
         }
     }
 
     // calculats and returns the results
     function calculateResult(previousValue: string | null, display: string, currentOperator: string | null): string {
+        try{
+            const result = eval(`${previousValue} ${currentOperator} ${display}`);
+            console.log(result);
 
+            return result.toString();
+        }catch(error){
+            return 'Error';
+        }
     }
 
     return(
