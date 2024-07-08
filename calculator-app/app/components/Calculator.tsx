@@ -27,23 +27,23 @@ export default function Calculator(){
     const symbols = ["Ac", "<x", "/", "*", "7", "8", "9", "-", "4", "5", "6", "+", "1", "2", "3", "=", "0", "."];
 
     function handleButton(symbol: string) {
-        if (symbol === "Ac") { // reset
+        if (symbol === "Ac") { // pressed clear
             setDisplay('0');
             setExpression('');
 
-            // reset state vars
+            // reset states
             setPreviousValue(null);
             setCurrentOperator(null);
             setIsNewInput(true);
             setHasDecimal(false);
-        } else if (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(symbol)) { // pressed number
+        }else if (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(symbol)) { // pressed number
             if (isNewInput) { // replace display
                 setDisplay(symbol);
             } else { // append to display
-                // edge case: display length > max length
+                // edge case: can not add more than display length
                 if (display.length > MAX_DISPLAY_LENGTH) return;
 
-                // edge case: multiple leading 0s
+                // edge case: multiple trailing 0s in the beginning
                 if (display === "0") { // prevent trailing 0s
                     if (symbol === "0") return;
                 }
@@ -70,13 +70,11 @@ export default function Calculator(){
                     setIsNewInput(true);
                     return;
                 }
-            } else if (!currentOperator) { // append operator to expression
-                setPreviousValue(display);
-            }
-
-            if (currentOperator && isNewInput) { // replace operator
+            } else if (currentOperator && isNewInput) { // replace operator
                 setExpression(expression.slice(0, expression.length - 1) + symbol);
-            } else { // append operator
+            } else if (!currentOperator) { // store first operand
+                setPreviousValue(display);
+            } else { // append operator to expression
                 setExpression(expression + symbol);
             }
 
