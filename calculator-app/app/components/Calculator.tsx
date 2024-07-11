@@ -37,14 +37,14 @@ export default function Calculator(){
             setIsNewInput(true);
             setHasDecimal(false);
         }else if (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(symbol)) { // pressed number
-            if (isNewInput) { // replace display
+            if (isNewInput) { // replace number in display
                 setDisplay(symbol);
-            } else { // append to display
-                // edge case: can not add more than display length
+            } else { // append number to display
+                // edge case: can not add more than display length (prevents inputting big numbers)
                 if (display.length > MAX_DISPLAY_LENGTH) return;
 
-                // edge case: multiple trailing 0s in the beginning
-                if (display === "0") { // prevent trailing 0s
+                // edge case: multiple trailing 0s in the beginning (prevents trailing 0s)
+                if (display === "0") {
                     if (symbol === "0") return;
                 }
 
@@ -54,41 +54,118 @@ export default function Calculator(){
             setExpression(expression + symbol);
             setIsNewInput(false);
         } else if (["+", "-", "*", "/"].includes(symbol)) { // pressed operator
-            if (currentOperator && !isNewInput) { // evaluate expression
+            if(currentOperator && !isNewInput){
                 try {
                     const result = calculateResult(previousValue, display, currentOperator);
                     if (result === 'Error') throw new Error("Calculation Error");
 
-                    // update display
+                    // Update display with the result
                     setDisplay(result);
 
-                    // store current result as previous value
-                    setPreviousValue(result);
-                } catch (error) { // display errors
+                    // Update expression to show the complete calculation
+                    setExpression(expression + " = " + result);
+
+                    // Reset for new calculation
+                    setPreviousValue(result);  // Keep the result as previous value for chaining
+                    setCurrentOperator(null);
+                    setIsNewInput(true);
+                    setHasDecimal(false);
+                } catch (error) {
                     setDisplay('Error');
                     setExpression('Error');
                     setIsNewInput(true);
-                    return;
+                    setPreviousValue(null);
+                    setCurrentOperator(null);
+                    setHasDecimal(false);
                 }
-            } else if (currentOperator && isNewInput) { // replace operator
-                setExpression(expression.slice(0, expression.length - 1) + symbol);
-            } else if (!currentOperator) { // store first operand
+            }
+
+            if (!currentOperator) { // store first operand
                 setPreviousValue(display);
-            } else { // append operator to expression
+                setExpression(display + symbol);
+            }
+
+            if (currentOperator && isNewInput) { // replace operator
+                setExpression(expression.slice(0, expression.length - 1) + symbol);
+            }else { // append operator to expression
                 setExpression(expression + symbol);
             }
 
             setCurrentOperator(symbol);
             setIsNewInput(true);
             setHasDecimal(false);
+        }else if(symbol === '='){ // pressed equals
+            if(!currentOperator && previousValue == null) return;
+
+            try{
+                const result = calculateResult(previousValue, display, currentOperator);
+                if (result === 'Error') throw new Error("Calculation Error");
+
+                setDisplay(result);
+
+                // reset for new calculation
+                setPreviousValue(null);
+                setCurrentOperator(null);
+                setIsNewInput(true);
+                setHasDecimal(false);
+            }catch(error){
+                setDisplay('Error');
+                setExpression('Error');
+                setIsNewInput(true);
+
+                // reset other states as needed
+                setPreviousValue(null);
+                setCurrentOperator(null);
+                setHasDecimal(false);
+            }
+        }else if(symbol === '.'){
+            if(hasDecimal) return;
+
+            if(isNewInput){
+                setDisplay("0.");
+                setExpression(expression + "0.");
+                setIsNewInput(false);
+            }else{
+                setDisplay(display + symbol);
+                setExpression(expression + symbol);
+            }
+
+            setHasDecimal(true);
+        }else if(symbol === '<x'){
+            // edge case: error occurs
+            if(display === 'Error'){
+                // reset
+                setDisplay("0");
+                setExpression("");
+                setIsNewInput(true);
+                setHasDecimal(false);
+            }else if(!isNewInput){ // only delete if we aren't starting a new input
+                if(display.length > 1){ // remove only when it is possible
+                    setDisplay(display.slice(0, -1));
+                    setExpression(expression.slice(0, -1));
+
+                    // edge case: removing a decimal
+                    if(display.endsWith('.')){
+                        setHasDecimal(false);
+                    }
+                }else{ // reset display to 0
+                    setDisplay('0');
+                    setExpression(expression.slice(0, -1));
+                    setIsNewInput(true);
+                    setHasDecimal(false);
+                }
+            }
         }
     }
 
-    // calculats and returns the results
+    // calculates and returns the results
     function calculateResult(previousValue: string | null, display: string, currentOperator: string | null): string {
         try{
-            const result = eval(`${previousValue} ${currentOperator} ${display}`);
-            console.log(result);
+            let result = eval(`${previousValue} ${currentOperator} ${display}`);
+
+            if(result.toString().length > MAX_DISPLAY_LENGTH){ // converts to exponentials if the length is greater than the desired length
+                result = result.toExponential(MAX_DISPLAY_LENGTH - 5);
+            }
 
             return result.toString();
         }catch(error){
