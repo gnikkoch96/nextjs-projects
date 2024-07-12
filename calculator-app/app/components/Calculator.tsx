@@ -54,7 +54,7 @@ export default function Calculator(){
             setExpression(expression + symbol);
             setIsNewInput(false);
         } else if (["+", "-", "*", "/"].includes(symbol)) { // pressed operator
-            if(currentOperator && !isNewInput){
+            if(currentOperator && !isNewInput){ // evaluate expression
                 try {
                     const result = calculateResult(previousValue, display, currentOperator);
                     if (result === 'Error') throw new Error("Calculation Error");
