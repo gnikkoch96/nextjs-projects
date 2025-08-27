@@ -13,7 +13,7 @@ export default function Login() {
         </span>
         <TextField label="Email" type="email" />
         <TextField label="Password" type="password" />
-        <Button type="submit" variant="contained">
+        <Button type="submit" variant="contained" color="primary">
           Sign In
         </Button>
       </Box>
