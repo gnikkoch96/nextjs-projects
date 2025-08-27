@@ -1,13 +1,16 @@
 "use client";
 
-import { Container } from "@mui/material";
+import { Container, Box, TextField, Button } from "@mui/material";
 
 export default function Login() {
   return (
-    <Container>
-      <div>
-        <p>Hello this is the login page</p>
-      </div>
+    <Container maxWidth="sm">
+      <Box 
+        component="form">
+            <TextField label="Email" type="email"/>
+            <TextField label="Password" type="password"/>
+            <Button type="submit" variant="contained">Sign In</Button>
+      </Box>
     </Container>
   );
 }
