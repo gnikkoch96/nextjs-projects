@@ -14,15 +14,15 @@ export default function Signup() {
         <TextField label="Password" type="password" />
         <TextField label="Re-Type Password" type="password" />
         <Button type="submit" variant="contained" color="primary">
-          Sign In
+          Sign Up
         </Button>
         <span className="text-center mt-3">
-          Already have an account?
+          Already have an account? {" "}
           <Link
             href="/auth/login"
             className="underline pointer hover:opacity-75"
           >
-            Sign in here!
+           Sign in here!
           </Link>
         </span>
       </Box>
