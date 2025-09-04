@@ -1,3 +1,5 @@
+'use client';
+
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
 import { Container, Box, TextField, Button } from "@mui/material";
 import Link from "next/link";
